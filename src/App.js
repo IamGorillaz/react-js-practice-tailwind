@@ -1,25 +1,12 @@
-import logo from './logo.svg';
-import './App.css';
+import Approval from "./component/pages/Approval/Approval";
+import ApprovePage from "./component/pages/Approval/Approval";
+import Login from "./component/pages/Login/Login";
+import CreateSubmission from "./component/pages/Submission/Submission";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    return <Approval>
+    
+    </Approval>;
 }
 
 export default App;
