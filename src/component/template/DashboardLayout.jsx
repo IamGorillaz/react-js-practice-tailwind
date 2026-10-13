@@ -1,15 +1,15 @@
 import Sidebar from "../organism/Sidebar";
+import { Outlet } from "react-router-dom";
 
-const DashboardLayout = ({ children }) => {
+const DashboardLayout = () => {
   return (
     <div className="flex min-h-screen bg-background">
-      <Sidebar  />
 
-      <main className="flex-1 shadow-md">
-        {children}
+      <main className="flex-1 p-8">
+        <Outlet />
       </main>
     </div>
   );
-}
+};
 
 export default DashboardLayout;

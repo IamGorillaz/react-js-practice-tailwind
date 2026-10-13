@@ -8,7 +8,7 @@ const Login = () => {
   const handleLogin = (e) => {
     e.preventDefault();
     navigate("/submission/create");
-  };
+  }; // 
   return (
     <div className="min-h-screen flex flex-row justify-center items-center bg-teal-30">
       <div
