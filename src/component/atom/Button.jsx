@@ -1,6 +1,12 @@
-const Button = ({ variant, className, children }) => {
+const Button = ({
+  variant,
+  className = "",
+  children,
+  type = "button",
+  ...props
+}) => {
   return (
-    <button variant={variant} className={className}>
+    <button type={type} className={className} {...props}>
       {children}
     </button>
   );

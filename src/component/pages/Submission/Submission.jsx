@@ -3,7 +3,7 @@ import SubmissionForm from "../../organism/SubmissionForm";
 import DashboardLayout from "../../template/DashboardLayout";
 
 
-function CreateSubmission() {
+const CreateSubmission =() => {
   return (
     <DashboardLayout>
       <div className="p-8">

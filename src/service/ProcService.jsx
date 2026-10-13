@@ -1,0 +1,58 @@
+export const approvalsDummy = [
+    {
+      id: 1,
+      title: "Pengadaan Laptop",
+      requester: "Budi",
+      date: "07/10/2026",
+      status: "PENDING",
+    },
+    {
+      id: 2,
+      title: "Pengadaan Monitor",
+      requester: "Andi",
+      date: "07/10/2026",
+      status: "PENDING",
+    },
+    {
+      id: 3,
+      title: "Pengadaan Keyboard",
+      requester: "Sinta",
+      date: "06/10/2026",
+      status: "APPROVED",
+    },
+    {
+      id: 4,
+      title: "Pengadaan Merpati Putih",
+      requester: "Bunted",
+      date: "06/10/2026",
+      status: "APPROVED",
+    },
+    {
+      id: 5,
+      title: "Pengadaan Truck India",
+      requester: "Prabskuy",
+      date: "17/08/2026",
+      status: "APPROVED",
+    },
+    {
+      id: 6,
+      title: "Pengadaan Mobil Kopdes",
+      requester: "Dadan",
+      date: "06/10/2026",
+      status: "APPROVED",
+    },
+    {
+      id: 7,
+      title: "Pengadaan Laptop Manager Kopdes",
+      requester: "Sudaryono",
+      date: "06/10/2026",
+      status: "REJECTED",
+    },
+    {
+      id: 9,
+      title: "Pengadaan Rokok",
+      requester: "Sudaryono",
+      date: "06/10/2026",
+      status: "REJECTED",
+    },
+  ];

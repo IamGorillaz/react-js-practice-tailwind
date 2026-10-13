@@ -1,6 +1,6 @@
 import Sidebar from "../organism/Sidebar";
 
-function ApprovalLayout({ children }) {
+const ApprovalLayout = ({ children }) => {
   return (
     <div className="flex min-h-screen bg-background">
       <Sidebar  />

@@ -32,7 +32,7 @@ const ApprovalTableRow = ({
 
       {/* Action */}
       <TableCell>
-        <Button className="bg-primary text-white rounded-lg px-4">
+        <Button className="bg-white text-black  border-2 border-gray-300 rounded-lg  px-4">
           Detail
         </Button>
       </TableCell>
