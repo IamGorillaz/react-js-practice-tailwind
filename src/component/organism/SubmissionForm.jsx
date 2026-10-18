@@ -1,53 +1,340 @@
+
+import { useEffect, useState } from "react";
 import Button from "../atom/Button";
 import Label from "../atom/Label";
 import TextArea from "../atom/TextArea";
 import FormField from "../molecule/FormField";
+import { SubmissionService } from "../../service/SubmissionService";
+import AssetService from "../../service/AssetService";
 
 const SubmissionForm = () => {
+  const [form, setForm] = useState({
+    title: "",
+    description: "",
+    assetCategoryId: "",
+    assetTypeId: "",
+    quantity: 1,
+  });
+
+  const [category, setCategory] = useState([]);
+  const [assetTypes, setAssetTypes] = useState([]);
+
+  const [loading, setLoading] = useState(false);
+  const [loadingTypes, setLoadingTypes] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const result = await AssetService.getCategory();
+        const body = result?.data ?? result;
+
+        const items = Array.isArray(body)
+          ? body
+          : Array.isArray(body?.data)
+            ? body.data
+            : [];
+
+        setCategory(items);
+      } catch (err) {
+        console.error(
+          "Gagal mengambil kategori:",
+          err.response?.data || err.message
+        );
+
+        setError("Gagal memuat kategori aset.");
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  // Mengubah input judul, deskripsi, kuantitas, dan tipe aset
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // Mengambil tipe aset berdasarkan kategori yang dipilih
+  const handleCategoryChange = async (e) => {
+    const categoryId = e.target.value;
+
+    setForm((prev) => ({
+      ...prev,
+      assetCategoryId: categoryId,
+      assetTypeId: "",
+    }));
+
+    setAssetTypes([]);
+    setError("");
+    setSuccess("");
+
+    if (!categoryId) {
+      return;
+    }
+
+    setLoadingTypes(true);
+
+    try {
+      const result = await AssetService.getAssetTypeById(
+        Number(categoryId)
+      );
+
+      const body = result?.data ?? result;
+
+      const items = Array.isArray(body)
+        ? body
+        : Array.isArray(body?.data)
+          ? body.data
+          : [];
+
+      setAssetTypes(items);
+
+      if (items.length === 0) {
+        setError("Tidak ada tipe aset pada kategori ini.");
+      }
+    } catch (err) {
+      console.error(
+        "Gagal mengambil tipe aset:",
+        err.response?.data || err.message
+      );
+
+      setError(
+        err.response?.data?.message ||
+          "Gagal memuat tipe aset."
+      );
+    } finally {
+      setLoadingTypes(false);
+    }
+  };
+
+  // Submit pengajuan aset
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    setError("");
+    setSuccess("");
+
+    if (!form.assetCategoryId) {
+      setError("Silakan pilih kategori aset.");
+      return;
+    }
+
+    if (!form.assetTypeId) {
+      setError("Silakan pilih tipe aset.");
+      return;
+    }
+
+    setLoading(true);
+
+    const payload = {
+      title: form.title,
+      description: form.description,
+      assetTypeId: Number(form.assetTypeId),
+      employeeId: 2,
+      quantity: Number(form.quantity),
+      createdBy: 2,
+    };
+
+    try {
+      console.log("Payload submission:", payload);
+
+      const response =
+        await SubmissionService.createSubmission(payload);
+
+      console.log("Response API:", response);
+
+      setSuccess("Pengajuan aset berhasil dibuat.");
+
+      setForm({
+        title: "",
+        description: "",
+        assetCategoryId: "",
+        assetTypeId: "",
+        quantity: 1,
+      });
+
+      setAssetTypes([]);
+    } catch (err) {
+      console.error(
+        "Error response:",
+        err.response?.data || err.message
+      );
+
+      setError(
+        err.response?.data?.message ||
+          "Gagal membuat pengajuan aset."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Reset form
+  const handleReset = () => {
+    setForm({
+      title: "",
+      description: "",
+      assetCategoryId: "",
+      assetTypeId: "",
+      quantity: 1,
+    });
+
+    setAssetTypes([]);
+    setError("");
+    setSuccess("");
+  };
+
   return (
-    <form className="gap-4 space-y-2">
-      <h1 className="font-light text-sm">
-        Judul <strong className="text-error">* </strong>
+    <form onSubmit={handleSubmit} className="gap-4 space-y-2">
+      {/* Judul */}
+      <h1 className="text-sm font-light">
+        Judul <strong className="text-error">*</strong>
       </h1>
+
       <FormField
+        name="title"
+        label="Title"
+        placeholder="Masukkan Judul"
+        value={form.title}
+        onChange={handleChange}
+        required
         className="w-full resize-none rounded-lg border border-border px-4 py-3 text-sm outline-none transition focus:border-primary focus:ring-primary"
-        label={"Title"}
-        placeholder={"Masukkan Judul"}
       />
-      <h1 className="font-light text-sm">
-        Deskripsi <strong className="text-error">* </strong>
+
+      {/* Deskripsi */}
+      <h1 className="text-sm font-light">
+        Deskripsi <strong className="text-error">*</strong>
       </h1>
+
       <div>
         <Label>Description</Label>
-        <TextArea placeholder="Jelaskan Kebutuhan" />
+
+        <TextArea
+          name="description"
+          placeholder="Jelaskan Kebutuhan"
+          value={form.description}
+          onChange={handleChange}
+          required
+        />
       </div>
-      <h1 className="font-light text-sm">
-        Tipe Aset <strong className="text-error">* </strong>
+
+      {/* Asset Category */}
+      <h1 className="text-sm font-light">
+        Kategori Aset <strong className="text-error">*</strong>
       </h1>
+
       <div>
-        <Label>Asset</Label>
-        <select className="w-full rounded-lg border border-border px-4 py-3 text-sm outline-none focus:border-primary">
-          <option value=""> Pilih Tipe Aset</option>
-          <option value="1">Laptop</option>
-          <option value="2">AC</option>
-          <option value="3">Kursi</option>
-          <option value="4">Meja</option>
-          <option value="5">Keyboard</option>
+        <Label>Asset Category</Label>
+
+        <select
+          name="assetCategoryId"
+          value={form.assetCategoryId}
+          onChange={handleCategoryChange}
+          required
+          className="w-full rounded-lg border border-border bg-white px-4 py-3 text-sm outline-none focus:border-primary"
+        >
+          <option value="" disabled>
+            Pilih kategori aset
+          </option>
+
+          {category.map((item) => (
+            <option key={item.assetId} value={item.assetId}>
+              {item.assetName}
+            </option>
+          ))}
         </select>
       </div>
-      <h1 className="font-light text-sm">
-        Kuantitas <strong className="text-error">* </strong>
+
+      {/* Asset Type */}
+      <h1 className="text-sm font-light">
+        Tipe Aset <strong className="text-error">*</strong>
       </h1>
+
+      <div>
+        <Label>Asset Type</Label>
+
+        <select
+          name="assetTypeId"
+          value={form.assetTypeId}
+          onChange={handleChange}
+          required
+          disabled={!form.assetCategoryId || loadingTypes}
+          className="w-full rounded-lg border border-border bg-white px-4 py-3 text-sm outline-none focus:border-primary disabled:cursor-not-allowed disabled:bg-gray-100"
+        >
+          <option value="" disabled>
+            {!form.assetCategoryId
+              ? "Pilih kategori terlebih dahulu"
+              : loadingTypes
+                ? "Memuat tipe aset..."
+                : "Pilih tipe aset"}
+          </option>
+
+          {assetTypes.map((item) => (
+            <option
+              key={item.assetTypeId}
+              value={item.assetTypeId}
+            >
+              {item.assetTypeName}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Kuantitas */}
+      <h1 className="text-sm font-light">
+        Kuantitas <strong className="text-error">*</strong>
+      </h1>
+
       <FormField
-        label={"Quantity"}
+        name="quantity"
+        label="Quantity"
         type="number"
-        placeholder={"Masukkan Jumlah Aset"}
+        min="1"
+        placeholder="Masukkan Jumlah Aset"
+        value={form.quantity}
+        onChange={handleChange}
+        required
         className="w-1/3 resize-none rounded-lg border border-border px-4 py-3 text-sm outline-none transition focus:border-primary focus:ring-primary"
       />
 
+      {/* Pesan error dan sukses */}
+      {error && (
+        <p className="text-sm text-error">
+          {error}
+        </p>
+      )}
+
+      {success && (
+        <p className="text-sm text-green-600">
+          {success}
+        </p>
+      )}
+
+      {/* Tombol */}
       <div className="flex justify-end gap-8 pt-4">
-        <Button variant={"Cancel"} className={"bg-error w-32 py-1 rounded-lg text-white text-sm shadow-sm"}>Batal</Button>
-        <Button variant={"Submit"} className={"bg-primary w-32 py-1 rounded-lg text-white text-sm shadow-sm"}>Submit</Button>
+        <Button
+          type="button"
+          variant="Cancel"
+          onClick={handleReset}
+          className="w-32 rounded-lg bg-error py-1 text-sm text-white shadow-sm"
+        >
+          Batal
+        </Button>
+
+        <Button
+          type="submit"
+          variant="Submit"
+          disabled={loading || loadingTypes}
+          className="w-32 rounded-lg bg-primary py-1 text-sm text-white shadow-sm"
+        >
+          {loading ? "Mengirim..." : "Submit"}
+        </Button>
       </div>
     </form>
   );
