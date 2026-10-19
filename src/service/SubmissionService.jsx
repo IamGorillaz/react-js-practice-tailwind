@@ -11,7 +11,7 @@ export const SubmissionService = {
     }
   },
 
-  // Get Employee
+  // Get Submission
   getSubmission: async () => {
     try {
       const response = await APIClient.get(

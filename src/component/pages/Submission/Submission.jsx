@@ -1,18 +1,6 @@
-import axios from "axios";
 import SubmissionForm from "../../organism/SubmissionForm";
-import SubmissionService from "../../../service/SubmissionService";
-import { useEffect, useState } from "react";
-
 
 const CreateSubmission = () => {
-  // use effect
-  // call getSubmission
-  //check console log
-
-  const [submission, setSubmission] = useState();
-  useEffect(() => {
-    SubmissionService.getSubmission()
-  }, []);
 
   return (
     <div className="p-8">

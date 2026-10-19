@@ -40,17 +40,16 @@ const SubmissionForm = () => {
       } catch (err) {
         console.error(
           "Gagal mengambil kategori:",
-          err.response?.data || err.message
+          err?.response?.data || err?.message || err
         );
 
-        setError("Gagal memuat kategori aset.");
+        setError(err?.message || err?.error || "Gagal memuat kategori aset.");
       }
     };
 
     fetchCategories();
   }, []);
 
-  // Mengubah input judul, deskripsi, kuantitas, dan tipe aset
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -60,7 +59,6 @@ const SubmissionForm = () => {
     }));
   };
 
-  // Mengambil tipe aset berdasarkan kategori yang dipilih
   const handleCategoryChange = async (e) => {
     const categoryId = e.target.value;
 
@@ -101,19 +99,17 @@ const SubmissionForm = () => {
     } catch (err) {
       console.error(
         "Gagal mengambil tipe aset:",
-        err.response?.data || err.message
+        err?.response?.data || err?.message || err
       );
 
       setError(
-        err.response?.data?.message ||
-          "Gagal memuat tipe aset."
+        err?.message || err?.error || "Gagal memuat tipe aset."
       );
     } finally {
       setLoadingTypes(false);
     }
   };
 
-  // Submit pengajuan aset
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -175,7 +171,6 @@ const SubmissionForm = () => {
     }
   };
 
-  // Reset form
   const handleReset = () => {
     setForm({
       title: "",
@@ -192,7 +187,6 @@ const SubmissionForm = () => {
 
   return (
     <form onSubmit={handleSubmit} className="gap-4 space-y-2">
-      {/* Judul */}
       <h1 className="text-sm font-light">
         Judul <strong className="text-error">*</strong>
       </h1>
@@ -207,7 +201,6 @@ const SubmissionForm = () => {
         className="w-full resize-none rounded-lg border border-border px-4 py-3 text-sm outline-none transition focus:border-primary focus:ring-primary"
       />
 
-      {/* Deskripsi */}
       <h1 className="text-sm font-light">
         Deskripsi <strong className="text-error">*</strong>
       </h1>
@@ -224,7 +217,6 @@ const SubmissionForm = () => {
         />
       </div>
 
-      {/* Asset Category */}
       <h1 className="text-sm font-light">
         Kategori Aset <strong className="text-error">*</strong>
       </h1>
@@ -251,7 +243,6 @@ const SubmissionForm = () => {
         </select>
       </div>
 
-      {/* Asset Type */}
       <h1 className="text-sm font-light">
         Tipe Aset <strong className="text-error">*</strong>
       </h1>
@@ -286,7 +277,6 @@ const SubmissionForm = () => {
         </select>
       </div>
 
-      {/* Kuantitas */}
       <h1 className="text-sm font-light">
         Kuantitas <strong className="text-error">*</strong>
       </h1>
@@ -303,7 +293,6 @@ const SubmissionForm = () => {
         className="w-1/3 resize-none rounded-lg border border-border px-4 py-3 text-sm outline-none transition focus:border-primary focus:ring-primary"
       />
 
-      {/* Pesan error dan sukses */}
       {error && (
         <p className="text-sm text-error">
           {error}
@@ -316,7 +305,6 @@ const SubmissionForm = () => {
         </p>
       )}
 
-      {/* Tombol */}
       <div className="flex justify-end gap-8 pt-4">
         <Button
           type="button"

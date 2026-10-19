@@ -14,17 +14,23 @@ export const AssetService = {
     }
   },
 
+  // Get Asset Type by CategortID
   getAssetTypeById: async (categoryId) => {
-    const response = await APIClient.get(
-      `http://localhost:8080/api/asset/type`,
-      {
-        params: {
-          categoryId: categoryId,
+    try {
+      const response = await APIClient.get(
+        `http://localhost:8080/api/asset/type`,
+        {
+          params: {
+            categoryId: categoryId,
+          },
         },
-      },
-    );
-
-    return response;
+      );
+      console.log(`Response GET Asset Type (categoryId=${categoryId}):`, response?.data);
+      return response;
+    } catch (error) {
+      console.error(error);
+      throw error.response ? error.response.data : error;
+    }
   },
 };
 
